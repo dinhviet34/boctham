@@ -1,0 +1,167 @@
+<meta charset="UTF-8">
+<title>Bốc thăm trúng thưởng</title>
+
+<!-- CSS (load bootstrap from a CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", sans-serif;
+        background-image: url("/images/bg.jpg");
+    }
+
+    .output {
+
+
+        border-radius: 10px;
+        font-size: 80px;
+        width: 100%;
+        height: 100%;
+        color: #0B60B0;
+        text-align: center;
+        font-size: 300pt;
+
+    }
+
+    #result {
+        font-size: large;
+        color: #0A1D56;
+        display: flex;
+        text-align: center;
+    }
+    #result div{
+        margin-left: 10px;
+    }
+    #footer{
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        background-image: url("/images/flower2.png");
+        color: #fff;
+        background-size: 100% 100%;
+    }
+    
+
+    .center {
+        background-color: #fff;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+        position: absolute;
+        border-radius: 10px;
+        left: 50%;
+        top: 50%;
+        -moz-transform: translate(-50%, -50%);
+        /* Firefox */
+        -ms-transform: translate(-50%, -50%);
+        /* IE 9 */
+        -webkit-transform: translate(-50%, -50%);
+        /* Safari and Chrome*/
+        -o-transform: translate(-50%, -50%);
+        /* Opera */
+        transform: translate(-50%, -50%);
+
+        /* optional size in px or %: */
+        width: 800px;
+        height: 600px;
+    }
+</style>
+<script>
+
+    $(document).ready(function () {
+        var socket = io("/");
+        var arr = [];
+        var arrbingo = [];
+        var reappend = $("#result");
+        for (var i = 1; i <= 148; i++) {
+            arr.push(i);
+        }
+        console.log(arr);
+        //client nhận dữ liệu từ server
+
+        socket.on("Server-sent-data", function (data) {
+            reappend.empty();
+            if (data == 'start') {
+                random();
+                if (arrbingo.includes(result) === true) {
+
+                }
+                else {
+                    arrbingo.push(random());
+                    var index = arr.indexOf(parseInt(random()));
+                    if (index !== -1) {
+                        arr.splice(index, 1);
+                    }
+                    console.log(arrbingo); console.log(arr);
+                    arrbingo.forEach(element => {
+                        if(element !=''){
+                            reappend.append('<div><img src="/images/gifticon.png" width="15px" height="15px"></img>' + element + '</div>')
+                        }
+                       
+                    });
+                }
+
+            }
+        });
+
+
+        var max_random = 100,
+            random_area = document.getElementById("output"),
+            origin_text = random_area.innerHTML;
+
+        function random() {
+            var i = 0;
+            var randomnumber = 0;
+            var refreshId = setInterval(function () {
+                i = i + 1;
+                console.log(i);
+                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                if (i == 20) {
+                    clearInterval(refreshId);
+
+
+                }
+            }, 300)
+
+            randomnumber = random_area.innerHTML;
+            return randomnumber;
+
+
+        }
+    })
+</script>
+
+<body>
+
+    <div id="banner">
+        <img width="103" height="36" style="margin: 5px;" title="Ngân Hàng TMCP Công Thương Việt Nam - VietinBank"
+            alt="Ngân Hàng TMCP Công Thương Việt Nam"
+            src="https://www.vietinbank.vn/vtbresource/web/export/system/modules/com.vietinbank.cardtemplate/resources/img/logo.png?v=02262018" />
+    </div>
+   
+    <div class="center">
+        <div id="result">
+
+        </div>
+        <hr>
+        <div class="output" id="output"></div>
+        <div id="footer">
+           
+          
+            <div style="font-weight: bold;">Ngân hàng TMCP Công Thương Việt Nam</div>
+            <div>Chi nhánh KCN Hải Dương</div>
+           
+        </div>
+    </div>
+   
+
+
+
+
+
+
+</body>
