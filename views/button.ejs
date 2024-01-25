@@ -48,7 +48,19 @@
         var socket = io("/");
 
         //client nhận dữ liệu từ server
-
+        socket.on("Server-sent-data", function (data) {
+            if (data == 'start') {
+                
+                $("#send").attr("disabled", true);
+                $("#send").html('Đang chạy...');
+            }
+        })
+        socket.on("Server-sent-home-ready",function(data){
+            if(data ==  "homeready"){
+                $("#send").attr("disabled", false);
+                $("#send").html('Bắt đầu');
+            }
+        })
         $("#send").click(function () {
 
             socket.emit("Client-sent-data", "start");

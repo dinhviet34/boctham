@@ -13,6 +13,7 @@
         padding: 0;
         font-family: "Roboto", sans-serif;
         background-image: url("/images/bg.jpg");
+        background-size: 100% 100%;
     }
 
     .output {
@@ -87,7 +88,7 @@
             reappend.empty();
             if (data == 'start') {
                 random();
-                if (arrbingo.includes(result) === true) {
+                if (arrbingo.includes(random()) === true) {
 
                 }
                 else {
@@ -96,6 +97,7 @@
                     if (index !== -1) {
                         arr.splice(index, 1);
                     }
+                  
                     console.log(arrbingo); console.log(arr);
                     arrbingo.forEach(element => {
                         if(element !=''){
@@ -104,31 +106,35 @@
                        
                     });
                 }
+             
 
             }
+            
         });
 
 
         var max_random = 100,
             random_area = document.getElementById("output"),
             origin_text = random_area.innerHTML;
-
+        
         function random() {
             var i = 0;
             var randomnumber = 0;
             var refreshId = setInterval(function () {
                 i = i + 1;
                 console.log(i);
+              
                 random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
                 if (i == 20) {
                     clearInterval(refreshId);
-
+                    socket.emit("Home-sent-data", "homeready");
 
                 }
             }, 300)
-
             randomnumber = random_area.innerHTML;
+           
             return randomnumber;
+           
 
 
         }
@@ -138,7 +144,7 @@
 <body>
 
     <div id="banner">
-        <img width="103" height="36" style="margin: 5px;" title="Ngân Hàng TMCP Công Thương Việt Nam - VietinBank"
+        <img width="153" height="56" style="margin: 5px;" title="Ngân Hàng TMCP Công Thương Việt Nam - VietinBank"
             alt="Ngân Hàng TMCP Công Thương Việt Nam"
             src="https://www.vietinbank.vn/vtbresource/web/export/system/modules/com.vietinbank.cardtemplate/resources/img/logo.png?v=02262018" />
     </div>
