@@ -13,22 +13,8 @@
     }
 
     .center {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -moz-transform: translate(-50%, -50%);
-        /* Firefox */
-        -ms-transform: translate(-50%, -50%);
-        /* IE 9 */
-        -webkit-transform: translate(-50%, -50%);
-        /* Safari and Chrome*/
-        -o-transform: translate(-50%, -50%);
-        /* Opera */
-        transform: translate(-50%, -50%);
-
-        /* optional size in px or %: */
-        width: 600px;
-        height: 600px;
+        
+        
     }
 
     .button {
@@ -37,9 +23,10 @@
         margin: 10px 0;
         padding: 10px;
         width: 100%;
-        height: 100%;
+       height: 430px;
         border-radius: 20px;
-        font-size: 100pt;
+        font-size: 90pt;
+        margin-top: 50px;
     }
 </style>
 <script>
@@ -49,21 +36,35 @@
 
         //client nhận dữ liệu từ server
         socket.on("Server-sent-data", function (data) {
-            if (data == 'start') {
+            if (data === 'start' || data==='start1' || data==='start2') {
                 
                 $("#send").attr("disabled", true);
                 $("#send").html('Đang chạy...');
+                $("#send1").attr("disabled", true);
+                $("#send1").html('Đang chạy...');
+                $("#send2").attr("disabled", true);
+                $("#send2").html('Đang chạy...');
             }
         })
         socket.on("Server-sent-home-ready",function(data){
             if(data ==  "homeready"){
                 $("#send").attr("disabled", false);
-                $("#send").html('Bắt đầu');
+                $("#send").html('Giải thường');
+                $("#send1").attr("disabled", false);
+                $("#send1").html('Giải nhất');
+                $("#send2").attr("disabled", false);
+                $("#send2").html('Giải nhì');
             }
         })
         $("#send").click(function () {
 
             socket.emit("Client-sent-data", "start");
+        });
+        $("#send1").click(function(){
+            socket.emit("Client-sent-data", "start1");
+        });
+        $("#send2").click(function(){
+            socket.emit("Client-sent-data", "start2");
         });
     })
 </script>
@@ -71,6 +72,8 @@
 <body>
 
     <div class="center">
-        <button class="button btn btn-primary" id="send">Bắt đầu</button>
+        <button class="button btn btn-primary" id="send1">Giải nhất</button>
+        <button class="button btn btn-primary" id="send2">Giải nhì</button>
+        <button class="button btn btn-primary" id="send">Giải thường</button>
     </div>
 </body>

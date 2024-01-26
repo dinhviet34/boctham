@@ -1,5 +1,5 @@
 <meta charset="UTF-8">
-<title>Bốc thăm trúng thưởng</title>
+<title>Bốc thăm trúng thưởng V1</title>
 
 <!-- CSS (load bootstrap from a CDN) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
@@ -26,6 +26,8 @@
         color: #0B60B0;
         text-align: center;
         font-size: 300pt;
+        background-repeat: no-repeat;
+        background-position: center;
 
     }
 
@@ -35,10 +37,12 @@
         display: flex;
         text-align: center;
     }
-    #result div{
+
+    #result div {
         margin-left: 10px;
     }
-    #footer{
+
+    #footer {
         position: fixed;
         bottom: 0;
         width: 100%;
@@ -47,7 +51,7 @@
         color: #fff;
         background-size: 100% 100%;
     }
-    
+
 
     .center {
         background-color: #fff;
@@ -86,55 +90,244 @@
 
         socket.on("Server-sent-data", function (data) {
             reappend.empty();
-            if (data == 'start') {
-                random();
-                if (arrbingo.includes(random()) === true) {
+            var result;
 
-                }
-                else {
-                    arrbingo.push(random());
-                    var index = arr.indexOf(parseInt(random()));
-                    if (index !== -1) {
-                        arr.splice(index, 1);
-                    }
-                  
-                    console.log(arrbingo); console.log(arr);
-                    arrbingo.forEach(element => {
-                        if(element !=''){
-                            reappend.append('<div><img src="/images/gifticon.png" width="15px" height="15px"></img>' + element + '</div>')
-                        }
-                       
-                    });
-                }
-             
+            result = random(data);
+
+
+
+            if (arrbingo.includes(result) === true) {
 
             }
-            
+            else {
+                arrbingo.push(result);
+                var index = arr.indexOf(parseInt(result));
+                if (index !== -1) {
+                    arr.splice(index, 1);
+                }
+
+                console.log(arrbingo); console.log(arr);
+                arrbingo.forEach(element => {
+                    if (element != '') {
+                        reappend.append('<div><img src="/images/gifticon.png" width="15px" height="15px"></img>' + element + '</div>')
+                    }
+
+                });
+            }
+
+
         });
 
+        function render2effect() {
+            var render2 = setInterval(function () {
+                random_area.innerHTML = "Overloading.";
+                random_area.innerHTML = "Overloading..";
+                random_area.innerHTML = "Overloading..."
+            })
+        }
 
         var max_random = 100,
             random_area = document.getElementById("output"),
             origin_text = random_area.innerHTML;
-        
-        function random() {
+
+        function random(command) {
             var i = 0;
             var randomnumber = 0;
+            random_area.style.backgroundColor = "transparent";
+            random_area.style.backgroundImage = 'none';
             var refreshId = setInterval(function () {
+                random_area.style.fontWeight = 'Medium';
                 i = i + 1;
                 console.log(i);
-              
-                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                if (i == 20) {
-                    clearInterval(refreshId);
-                    socket.emit("Home-sent-data", "homeready");
+                if (command === 'start') {
+                    random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                    if (i == 20) {
+                        clearInterval(refreshId);
+                        socket.emit("Home-sent-data", "homeready");
+
+                    }
+                }
+                else {
+                    if (command === 'start2') {
+                        if (i < 20) {
+                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                        }
+                        if (i > 21) {
+                            //clearInterval(refreshId);
+                            random_area.style.backgroundImage = "url(/images/thinking.gif)";
+                            random_area.innerHTML = '';
+                        }
+                        if (i > 24) {
+                            //clearInterval(refreshId);
+                            random_area.style.backgroundImage = "url(/images/thinking2.gif)";
+                            random_area.innerHTML = '';
+                        }
+                        if (i > 28) {
+                            //clearInterval(refreshId);
+                            random_area.style.backgroundImage = "url(/images/thinking3.gif)";
+                            random_area.innerHTML = '';
+                        }
+                        if (i > 32) {
+                            //clearInterval(refreshId);
+                            random_area.style.backgroundImage = "url(/images/thinking.gif)";
+                            random_area.innerHTML = '';
+                        }
+                        if (i > 36) {
+                            //clearInterval(refreshId);
+                            random_area.style.backgroundImage = "url(/images/thinking2.gif)";
+                            random_area.innerHTML = '';
+                        }
+                        if (i > 40) {
+                            //clearInterval(refreshId);
+                            random_area.style.backgroundImage = "url(/images/thinking3.gif)";
+                            random_area.innerHTML = '';
+                        }
+
+                        if (i > 42) {
+                            random_area.style.backgroundImage = "none";
+                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+
+                        }
+                        if (i > 62) {
+                            random_area.innerHTML = '!??...';
+
+                        }
+                        if (i > 67) {
+
+                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                        }
+                        if (i > 80) {
+                            random_area.innerHTML = '-';
+                        }
+                        if (i > 83) {
+                            random_area.innerHTML = '--';
+                        }
+                        if (i > 86) {
+                            random_area.innerHTML = '---';
+                        }
+                        if (i > 88) {
+                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                        }
+
+                        if (i == 110) {
+                            random_area.style.backgroundImage = "url(/images/giftopen2.jpg)";
+                            random_area.style.fontWeight = 'bold';
+                            clearInterval(refreshId);
+                            socket.emit("Home-sent-data", "homeready");
+                        }
+
+                    }
+                    else {
+                        if (command === 'start1') {
+                            if (i < 40) {
+                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                            }
+
+                            if (i > 51) {
+                                //clearInterval(refreshId);
+                                random_area.style.backgroundImage = "url(/images/thinking.gif)";
+                                random_area.innerHTML = '';
+                            }
+                            if (i > 52) {
+                                //clearInterval(refreshId);
+                                random_area.style.backgroundImage = "url(/images/thinking2.gif)";
+                                random_area.innerHTML = '';
+                            }
+                            if (i > 53) {
+                                //clearInterval(refreshId);
+                                random_area.style.backgroundImage = "url(/images/thinking3.gif)";
+                                random_area.innerHTML = '';
+                            }
+
+
+                            if (i > 54) {
+                                random_area.style.backgroundImage = "none";
+                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+
+                            }
+                            if (i > 62) {
+                                random_area.style.backgroundColor = '#3C3633';
+
+
+                            }
+                            if (i > 63) {
+                                random_area.style.backgroundColor = '#D04848';
+
+
+                            }
+                            if (i > 64) {
+                                random_area.style.backgroundColor = '#3468C0';
+
+
+                            }
+                            if (i > 65) {
+                                random_area.style.backgroundColor = '#3D3B40';
+
+
+                            }
+                            if (i > 67) {
+
+                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                            }
+                            if (i > 75) {
+                                random_area.style.backgroundImage = 'url(/images/systemerror.jpg)';
+                                random_area.innerHTML = '';
+                            }
+                            if (i > 83) {
+                                random_area.style.fontSize = '100pt';
+                                random_area.innerHTML = 'Đang khôi phục .';
+                            }
+                            if (i > 84) {
+                                random_area.innerHTML = 'Đang khôi phục ..';
+                            }
+                            if (i > 85) {
+                                random_area.innerHTML = 'Đang khôi phục ...';
+                            }
+                            if (i > 86) {
+                                random_area.style.fontSize = '100pt';
+                                random_area.innerHTML = 'Đang khôi phục .';
+                            }
+                            if (i > 87) {
+                                random_area.innerHTML = 'Đang khôi phục ..';
+                            }
+                            if (i > 88) {
+                                random_area.innerHTML = 'Đang khôi phục ...';
+                            }
+                            if (i > 89) {
+                                random_area.innerHTML = 'Đang khôi phục ..';
+                            }
+                            if (i > 90) {
+                                random_area.innerHTML = 'Đang khôi phục ..';
+                            }
+                            if (i > 91) {
+                                random_area.innerHTML = 'Đang khôi phục ...';
+                            }
+                            if (i > 92) {
+                                random_area.style.fontSize = '300pt';
+                                random_area.style.backgroundColor = "transparent";
+                                random_area.style.backgroundImage = 'none';
+                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                            }
+                            if (i == 160) {
+
+                                random_area.style.backgroundImage = "url(/images/giftopen2.jpg)";
+                                random_area.style.fontWeight = 'bold';
+                                clearInterval(refreshId);
+                                socket.emit("Home-sent-data", "homeready");
+                            }
+
+                        }
+                    }
+
 
                 }
+
+
             }, 300)
             randomnumber = random_area.innerHTML;
-           
+
             return randomnumber;
-           
+
 
 
         }
@@ -148,7 +341,7 @@
             alt="Ngân Hàng TMCP Công Thương Việt Nam"
             src="https://www.vietinbank.vn/vtbresource/web/export/system/modules/com.vietinbank.cardtemplate/resources/img/logo.png?v=02262018" />
     </div>
-   
+
     <div class="center">
         <div id="result">
 
@@ -156,14 +349,14 @@
         <hr>
         <div class="output" id="output"></div>
         <div id="footer">
-           
-          
+
+
             <div style="font-weight: bold;">Ngân hàng TMCP Công Thương Việt Nam</div>
             <div>Chi nhánh KCN Hải Dương</div>
-           
+
         </div>
     </div>
-   
+
 
 
 
