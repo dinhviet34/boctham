@@ -60,7 +60,7 @@
         border-radius: 10px;
         left: 50%;
         top: 50%;
-       
+
         -moz-transform: translate(-50%, -50%);
         /* Firefox */
         -ms-transform: translate(-50%, -50%);
@@ -138,7 +138,7 @@
             random_area.style.backgroundImage = 'none';
             random_area.style.fontWeight = 'normal';
             var refreshId = setInterval(function () {
-               
+
                 i = i + 1;
                 console.log(i);
                 if (command === 'start') {
@@ -319,10 +319,24 @@
                             }
 
                         }
+                        else {
+                            if (command === 'start3') {
+                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+                                if (i == 60) {
+                                    random_area.style.backgroundImage = "url(/images/giftopen3.jpg)";
+                                    random_area.style.fontWeight = 'bold';
+                                    clearInterval(refreshId);
+                                    socket.emit("Home-sent-data", "homeready");
+
+                                }
+                            }
+                        }
+
                     }
 
 
                 }
+
 
 
             }, 300)

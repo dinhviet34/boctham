@@ -44,6 +44,8 @@
                 $("#send1").html('Đang chạy...');
                 $("#send2").attr("disabled", true);
                 $("#send2").html('Đang chạy...');
+                $("#send3").attr("disabled", true);
+                $("#send3").html('Đang chạy...');
             }
         })
         socket.on("Server-sent-home-ready",function(data){
@@ -51,9 +53,11 @@
                 $("#send").attr("disabled", false);
                 $("#send").html('Giải thường');
                 $("#send1").attr("disabled", false);
-                $("#send1").html('Giải nhất');
+                $("#send1").html('Giải đặc biệt');
                 $("#send2").attr("disabled", false);
-                $("#send2").html('Giải nhì');
+                $("#send2").html('Giải nhất');
+                $("#send3").attr("disabled", false);
+                $("#send3").html('Giải nhì');
             }
         })
         $("#send").click(function () {
@@ -66,14 +70,18 @@
         $("#send2").click(function(){
             socket.emit("Client-sent-data", "start2");
         });
+        $("#send3").click(function(){
+            socket.emit("Client-sent-data", "start3");
+        });
     })
 </script>
 
 <body>
 
     <div class="center">
-        <button class="button btn btn-primary" id="send1">Giải nhất</button>
-        <button class="button btn btn-primary" id="send2">Giải nhì</button>
+        <button class="button btn btn-primary" id="send1">Giải đặc biệt</button>
+        <button class="button btn btn-primary" id="send2">Giải nhất</button>
+        <button class="button btn btn-primary" id="send3">Giải nhì</button>
         <button class="button btn btn-primary" id="send">Giải thường</button>
     </div>
 </body>
