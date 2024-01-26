@@ -60,6 +60,7 @@
         border-radius: 10px;
         left: 50%;
         top: 50%;
+       
         -moz-transform: translate(-50%, -50%);
         /* Firefox */
         -ms-transform: translate(-50%, -50%);
@@ -135,8 +136,9 @@
             var randomnumber = 0;
             random_area.style.backgroundColor = "transparent";
             random_area.style.backgroundImage = 'none';
+            random_area.style.fontWeight = 'normal';
             var refreshId = setInterval(function () {
-                random_area.style.fontWeight = 'Medium';
+               
                 i = i + 1;
                 console.log(i);
                 if (command === 'start') {
