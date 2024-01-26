@@ -119,13 +119,7 @@
 
         });
 
-        function render2effect() {
-            var render2 = setInterval(function () {
-                random_area.innerHTML = "Overloading.";
-                random_area.innerHTML = "Overloading..";
-                random_area.innerHTML = "Overloading..."
-            })
-        }
+       
 
         var max_random = 100,
             random_area = document.getElementById("output"),
@@ -151,6 +145,7 @@
                 }
                 else {
                     if (command === 'start2') {
+
                         if (i < 20) {
                             random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
                         }
@@ -272,37 +267,37 @@
                                 random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
                             }
                             if (i > 75) {
-                                random_area.style.backgroundImage = 'url(/images/systemerror.jpg)';
+                                random_area.style.backgroundImage = 'url(/images/giftopen2.jpg)';
                                 random_area.innerHTML = '';
                             }
                             if (i > 83) {
                                 random_area.style.fontSize = '100pt';
-                                random_area.innerHTML = 'Đang khôi phục .';
+                                random_area.innerHTML = 'Tiếp tục .';
                             }
                             if (i > 84) {
-                                random_area.innerHTML = 'Đang khôi phục ..';
+                                random_area.innerHTML = 'Tiếp tục ..';
                             }
                             if (i > 85) {
-                                random_area.innerHTML = 'Đang khôi phục ...';
+                                random_area.innerHTML = 'Tiếp tục...';
                             }
                             if (i > 86) {
                                 random_area.style.fontSize = '100pt';
-                                random_area.innerHTML = 'Đang khôi phục .';
+                                random_area.innerHTML = 'Tiếp tục .';
                             }
                             if (i > 87) {
-                                random_area.innerHTML = 'Đang khôi phục ..';
+                                random_area.innerHTML = 'Tiếp tục ..';
                             }
                             if (i > 88) {
-                                random_area.innerHTML = 'Đang khôi phục ...';
+                                random_area.innerHTML = 'Tiếp tục ...';
                             }
                             if (i > 89) {
-                                random_area.innerHTML = 'Đang khôi phục ..';
+                                random_area.innerHTML = 'Tiếp tục ..';
                             }
                             if (i > 90) {
-                                random_area.innerHTML = 'Đang khôi phục ..';
+                                random_area.innerHTML = 'Tiếp tục ..';
                             }
                             if (i > 91) {
-                                random_area.innerHTML = 'Đang khôi phục ...';
+                                random_area.innerHTML = 'Tiếp tục ...';
                             }
                             if (i > 92) {
                                 random_area.style.fontSize = '300pt';
