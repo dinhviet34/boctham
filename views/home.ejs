@@ -47,7 +47,7 @@
                         $("#linktable").prop("href", domain + "/table/" + sup.room + "/" + sup.game + "/" + sup.coupon + "/" + sup.accessToken);
                         //$("#button").val(domain + "/button/" + sup.room + "/" + sup.accessToken);
 
-                        funcsend("Joinroom", sup.room)
+                        funcsend("Joinroom", sup.accessToken)
                         $('#qrcode').empty();
                         $("#result").show();
                         var buttonlink = domain + "/button/" + sup.room.replaceAll(" ","%20") + "/" + sup.accessToken
@@ -172,7 +172,7 @@
 
 
                 <div>
-                    <label>Name</label>
+                    <label>Event Name</label>
                     <input class="form-control" type="text" id="roomnum">
                 </div>
                 <div>

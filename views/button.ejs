@@ -31,7 +31,7 @@
         const funcsend = (name, msg) => {
             socket.emit(name, msg);
         }
-        funcsend("Joinroom","<%=room%>")
+        funcsend("Joinroom","<%=key%>")
         //client nhận dữ liệu từ server
         socket.on("RoomAlert",function(data){
            console.log(data);
@@ -54,7 +54,7 @@
         $("#send").click(function (e) {
             e.preventDefault();
             if (!this.dataset.ignoreClick) {
-                funcsend("Client-sent-data","start <%=room%>");
+                funcsend("Client-sent-data","start <%=key%>");
             }
 
         });
@@ -62,13 +62,13 @@
             const btn = this;
             delete this.dataset.ignoreClick;
             btn.dataset.longPressTimer = setTimeout(function () {
-                funcsend("Client-sent-data","longstart <%=room%>");
+                funcsend("Client-sent-data","longstart <%=key%>");
                 btn.dataset.ignoreClick = true;
             }, 1000)
         }).on('mouseup mouseleave touchend', function (e) {
             clearTimeout(this.dataset.longPressTimer)
             //alert("fuck");
-            funcsend("Client-sent-data","endlongstart <%=room%>");
+            funcsend("Client-sent-data","endlongstart <%=key%>");
         });
     })
 
