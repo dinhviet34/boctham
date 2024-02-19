@@ -1,377 +1,236 @@
-<meta charset="UTF-8">
-<title>Bốc thăm trúng thưởng V1</title>
+<html>
 
-<!-- CSS (load bootstrap from a CDN) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
-<style>
-    html,
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: "Roboto", sans-serif;
-        background-image: url("/images/bg.jpg");
-        background-size: 100% 100%;
-    }
-
-    .output {
-
-
-        border-radius: 10px;
-        font-size: 80px;
-        width: 100%;
-        height: 100%;
-        color: #0B60B0;
-        text-align: center;
-        font-size: 300pt;
-        background-repeat: no-repeat;
-        background-position: center;
-
-    }
-
-    #result {
-        font-size: large;
-        color: #0A1D56;
-        display: flex;
-        text-align: center;
-    }
-
-    #result div {
-        margin-left: 10px;
-    }
-
-    #footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        text-align: center;
-        background-image: url("/images/flower2.png");
-        color: #fff;
-        background-size: 100% 100%;
-    }
-
-
-    .center {
-        background-color: #fff;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
-        position: absolute;
-        border-radius: 10px;
-        left: 50%;
-        top: 50%;
-
-        -moz-transform: translate(-50%, -50%);
-        /* Firefox */
-        -ms-transform: translate(-50%, -50%);
-        /* IE 9 */
-        -webkit-transform: translate(-50%, -50%);
-        /* Safari and Chrome*/
-        -o-transform: translate(-50%, -50%);
-        /* Opera */
-        transform: translate(-50%, -50%);
-
-        /* optional size in px or %: */
-        width: 800px;
-        height: 600px;
-    }
-</style>
-<script>
-
-    $(document).ready(function () {
-        var socket = io("/");
-        var arr = [];
-        var arrbingo = [];
-        var reappend = $("#result");
-        for (var i = 1; i <= 156; i++) {
-            arr.push(i);
-        }
-        console.log(arr);
-        //client nhận dữ liệu từ server
-
-        socket.on("Server-sent-data", function (data) {
-            reappend.empty();
-            var result;
-
-            result = random(data);
-
-
-
-            if (arrbingo.includes(result) === true) {
-
+<head>
+    <title>Lucky number</title>
+    <link rel="icon" type="image/x-icon" href="/images/logo.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/css/bootstrap.min.css"
+        integrity="sha512-oc9+XSs1H243/FRN9Rw62Fn8EtxjEYWHXRvjS43YtueEewbS6ObfXcJNyohjHqVKFPoXXUxwc+q1K7Dee6vv9g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.rawgit.com/KeeeX/qrcodejs/master/qrcode.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <script>
+        $(document).ready(function () {
+            $('#result').hide();
+            var socket = io("/");
+            const funcsend = (name, msg) => {
+                socket.emit(name, msg);
             }
-            else {
-                arrbingo.push(result);
-                var index = arr.indexOf(parseInt(result));
-                if (index !== -1) {
-                    arr.splice(index, 1);
-                }
+            var domain = window.location.protocol + "//" + window.location.host;
+            $("#creat").click(function () {
+                const roomnum = $("#roomnum").val();
+                const gamechar = $("#gamechar").val();
+                const coupon = $("#couponnum").val();
+                // alert(roomnum + gamechar);
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
 
-                console.log(arrbingo); console.log(arr);
-                arrbingo.forEach(element => {
-                    if (element != '') {
-                        reappend.append('<div><img src="/images/gifticon.png" width="15px" height="15px"></img>' + element + '</div>')
-                    }
-
+                var raw = JSON.stringify({
+                    "room": roomnum,
+                    "game": gamechar,
+                    "coupon": coupon
                 });
-            }
 
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
 
-        });
+                fetch(domain + "/builder", requestOptions)
+                    .then(response => response.text())
+                    .then(result => {
+                        console.log(result)
+                        var sup = JSON.parse(result);
+                        $("#linktable").prop("href", domain + "/table/" + sup.room + "/" + sup.game + "/" + sup.coupon + "/" + sup.accessToken);
+                        //$("#button").val(domain + "/button/" + sup.room + "/" + sup.accessToken);
 
-       
+                        funcsend("Joinroom", sup.room)
+                        $('#qrcode').empty();
+                        $("#result").show();
+                        const qrcode = new QRCode(document.getElementById('qrcode'), {
+                            text: domain + "/button/" + sup.room + "/" + sup.accessToken,
+                            width: 128,
+                            height: 128,
+                            colorDark: '#000',
+                            colorLight: '#fff',
+                            correctLevel: QRCode.CorrectLevel.H,
+                            size:500
+                        });
 
-        var max_random = 100,
-            random_area = document.getElementById("output"),
-            origin_text = random_area.innerHTML;
-
-        function random(command) {
-            var i = 0;
-            var randomnumber = 0;
-            random_area.style.backgroundColor = "transparent";
-            random_area.style.backgroundImage = 'none';
-            random_area.style.fontWeight = 'normal';
-            var refreshId = setInterval(function () {
-
-                i = i + 1;
-                console.log(i);
-                if (command === 'start') {
-                    random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                    if (i == 20) {
-                        clearInterval(refreshId);
-                        socket.emit("Home-sent-data", "homeready");
-
-                    }
-                }
-                else {
-                    if (command === 'start2') {
-
-                        if (i < 20) {
-                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                        }
-                        /*if (i > 21) {
-                            //clearInterval(refreshId);
-                            random_area.style.backgroundImage = "url(/images/thinking.gif)";
-                            random_area.innerHTML = '';
-                        }
-                        if (i > 24) {
-                            //clearInterval(refreshId);
-                            random_area.style.backgroundImage = "url(/images/thinking2.gif)";
-                            random_area.innerHTML = '';
-                        }
-                        if (i > 28) {
-                            //clearInterval(refreshId);
-                            random_area.style.backgroundImage = "url(/images/thinking3.gif)";
-                            random_area.innerHTML = '';
-                        }
-                        if (i > 32) {
-                            //clearInterval(refreshId);
-                            random_area.style.backgroundImage = "url(/images/thinking.gif)";
-                            random_area.innerHTML = '';
-                        }
-                        if (i > 36) {
-                            //clearInterval(refreshId);
-                            random_area.style.backgroundImage = "url(/images/thinking2.gif)";
-                            random_area.innerHTML = '';
-                        }
-                        if (i > 40) {
-                            //clearInterval(refreshId);
-                            random_area.style.backgroundImage = "url(/images/thinking3.gif)";
-                            random_area.innerHTML = '';
-                        }*/
-
-                        if (i > 42) {
-                            random_area.style.backgroundImage = "none";
-                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-
-                        }
-                        if (i > 62) {
-                            random_area.innerHTML = '';
-
-                        }
-                        if (i > 67) {
-
-                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                        }
-                        if (i > 80) {
-                            random_area.innerHTML = '-';
-                        }
-                        if (i > 83) {
-                            random_area.innerHTML = '--';
-                        }
-                        if (i > 86) {
-                            random_area.innerHTML = '---';
-                        }
-                        if (i > 88) {
-                            random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                        }
-
-                        if (i == 110) {
-                            random_area.style.backgroundImage = "url(/images/giftopen2.jpg)";
-                            random_area.style.fontWeight = 'bold';
-                            clearInterval(refreshId);
-                            socket.emit("Home-sent-data", "homeready");
-                        }
-
-                    }
-                    else {
-                        if (command === 'start1') {
-                            if (i < 40) {
-                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                            }
-
-                           /* if (i > 51) {
-                                //clearInterval(refreshId);
-                                //random_area.style.backgroundImage = "url(/images/thinking.gif)";
-                                random_area.innerHTML = '';
-                            }
-                            if (i > 52) {
-                                //clearInterval(refreshId);
-                                //random_area.style.backgroundImage = "url(/images/thinking2.gif)";
-                                random_area.innerHTML = '';
-                            }*/
-                            if (i > 53) {
-                                //clearInterval(refreshId);
-                               // random_area.style.backgroundImage = "url(/images/thinking3.gif)";
-                                random_area.innerHTML = '';
-                            }
-
-
-                            if (i > 54) {
-                                random_area.style.backgroundImage = "none";
-                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-
-                            }
-                            if (i > 62) {
-                                random_area.style.backgroundColor = '#3C3633';
-
-
-                            }
-                            if (i > 63) {
-                                random_area.style.backgroundColor = '#D04848';
-
-
-                            }
-                            if (i > 64) {
-                                random_area.style.backgroundColor = '#3468C0';
-
-
-                            }
-                            if (i > 65) {
-                                random_area.style.backgroundColor = '#3D3B40';
-
-
-                            }
-                            if (i > 67) {
-
-                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                            }
-                            if (i > 75) {
-                                random_area.style.backgroundImage = 'url(/images/giftopen2.jpg)';
-                                random_area.innerHTML = '';
-                            }
-                            if (i > 83) {
-                                random_area.style.fontSize = '100pt';
-                                random_area.innerHTML = 'Tiếp tục .';
-                            }
-                            if (i > 84) {
-                                random_area.innerHTML = 'Tiếp tục ..';
-                            }
-                            if (i > 85) {
-                                random_area.innerHTML = 'Tiếp tục...';
-                            }
-                            if (i > 86) {
-                                //random_area.style.fontSize = '100pt';
-                                random_area.innerHTML = 'Tiếp tục .';
-                            }
-                            if (i > 87) {
-                                random_area.innerHTML = 'Tiếp tục ..';
-                            }
-                            if (i > 88) {
-                                random_area.innerHTML = 'Tiếp tục ...';
-                            }
-                            if (i > 89) {
-                                random_area.innerHTML = 'Tiếp tục ..';
-                            }
-                            if (i > 90) {
-                                random_area.innerHTML = 'Tiếp tục ..';
-                            }
-                            if (i > 91) {
-                                random_area.innerHTML = 'Tiếp tục ...';
-                            }
-                            if (i > 92) {
-                                random_area.style.fontSize = '300pt';
-                                random_area.style.backgroundColor = "transparent";
-                                random_area.style.backgroundImage = 'none';
-                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                            }
-                            if (i == 160) {
-
-                                random_area.style.backgroundImage = "url(/images/giftopen2.jpg)";
-                                random_area.style.fontWeight = 'bold';
-                                clearInterval(refreshId);
-                                socket.emit("Home-sent-data", "homeready");
-                            }
-
-                        }
-                        else {
-                            if (command === 'start3') {
-                                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
-                                if (i == 60) {
-                                    random_area.style.backgroundImage = "url(/images/giftopen3.jpg)";
-                                    random_area.style.fontWeight = 'bold';
-                                    clearInterval(refreshId);
-                                    socket.emit("Home-sent-data", "homeready");
-
-                                }
-                            }
-                        }
-
-                    }
-
-
-                }
+                    })
+                    .catch(error => console.log('error', error));
+            })
+        })
+    </script>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Roboto", sans-serif;
+            /*background-image: url("/images/bg.jpg");*/
+            background-size: 100% 100%;
+            background-color: rgb(240 241 245);
+            background-image: linear-gradient(rgb(210 213 219) 1px, transparent 1px), linear-gradient(to right, rgb(210 213 219) 1px, rgb(240 241 245) 1px);
+            background-size: 20px 20px;
+            display: grid;
+            height: 100%;
+            margin: 0;
+            font-family: sans-serif;
+            place-items: center;
+            color: rgb(22 25 30);
+        }
 
 
 
-            }, 300)
-            randomnumber = random_area.innerHTML;
 
-            return randomnumber;
 
+        #footer {
+
+            bottom: 0;
+            height: 100px;
+            width: 100%;
+           
+            color: rgb(37, 36, 36);
+
+            text-align: center;
+          
+        }
+
+        .groupbox {
+            background:
+                linear-gradient(#fff 0 0) padding-box,
+                /*this is your grey background*/
+                linear-gradient(to right, #9c20aa, #fb3570) border-box;
+            color: #313149;
+            padding: 10px;
+            border: 1px solid transparent;
+            border-radius: 15px;
+
+            margin: 10px;
+
+        }
+
+        #banner {
+
+            margin-top: 20px;
+            color: #265073;
+            display: flex;
 
 
         }
-    })
-</script>
+
+        #bannertext {
+            vertical-align: middle;
+
+        }
+
+        #controls div {
+            margin-top: 5px;
+        }
+        #result{
+            text-align: center;
+
+        }
+        #result div{
+            margin: 10px;
+        }
+        
+    </style>
+
+</head>
 
 <body>
-
     <div id="banner">
-        <img width="153" height="56" style="margin: 5px;" title="Ngân Hàng TMCP Công Thương Việt Nam - VietinBank"
-            alt="Ngân Hàng TMCP Công Thương Việt Nam"
-            src="https://www.vietinbank.vn/vtbresource/web/export/system/modules/com.vietinbank.cardtemplate/resources/img/logo.png?v=02262018" />
-    </div>
+        <div id="logo">
+            <img width="40" height="40" style="margin: 5px;" title="Random number" alt="Random"
+                src="/images/logo.png" />
+        </div>
+        <div id="bannertext">
+            <h1>Random number</h1>
+        </div>
 
-    <div class="center">
-        <div id="result">
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+
+
+            <div class="groupbox col-lg-5 col-sm-12" id="guide">
+                Fill all info to right table:
+                Name is name of your event
+                Random or select mean random is comletely random number it is fair mode and select allow who have button can select number if they leave a button
+                Number of coupon is number of numbers to select random
+                After you can click Create Button 
+                Go to table button and Qrcode appear . Click Go to table to show random number. Use mobile device to scan qrcode you have a button to control random number (start random or stop...)
+                And enjoy !    
+            </div>
+            <div class="groupbox col-lg-5 col-sm-12" id="controls">
+
+
+                <div>
+                    <label>Name</label>
+                    <input class="form-control" type="text" id="roomnum">
+                </div>
+                <div>
+                    <label>Random or select</label>
+                    <select class="form-control" name="fairornot" id="gamechar">
+                        <option value="Random" selected>Random</option>
+                        <option value="Select">Select</option>
+
+                    </select>
+
+                </div>
+                <div>
+                    <label>Number of coupon</label>
+                    <input class="form-control" type="text" id="couponnum">
+                </div>
+
+                <div>
+                    <button class="w-100 btn btn-lg btn-primary" id="creat" data-toggle="modal"
+                        data-target="#exampleModal">
+                        Create </button>
+                </div>
+                <div id="result">
+                    <div>
+                        <a class="btn btn-outline-primary" target="_blank" id="linktable">Go to table</a>
+                    </div>
+                    
+
+                    <div id="qrcode"></div>
+                </div>
+            </div>
 
         </div>
-        <hr>
-        <div class="output" id="output"></div>
-        <div id="footer">
 
 
-            <div style="font-weight: bold;">Ngân hàng TMCP Công Thương Việt Nam</div>
-            <div>Chi nhánh KCN Hải Dương</div>
 
-        </div>
     </div>
 
 
 
 
+    <div id="footer" class="d-flex flex-column justify-content-center align-items-center">
+        <div>
+            Made by KVcom
+        </div>
+        <br>
+        <div>
+            <a href="dinhviet34@gmail.com">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-envelope-at-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M2 2A2 2 0 0 0 .05 3.555L8 8.414l7.95-4.859A2 2 0 0 0 14 2zm-2 9.8V4.698l5.803 3.546zm6.761-2.97-6.57 4.026A2 2 0 0 0 2 14h6.256A4.5 4.5 0 0 1 8 12.5a4.49 4.49 0 0 1 1.606-3.446l-.367-.225L8 9.586zM16 9.671V4.697l-5.803 3.546.338.208A4.5 4.5 0 0 1 12.5 8c1.414 0 2.675.652 3.5 1.671" />
+                    <path
+                        d="M15.834 12.244c0 1.168-.577 2.025-1.587 2.025-.503 0-1.002-.228-1.12-.648h-.043c-.118.416-.543.643-1.015.643-.77 0-1.259-.542-1.259-1.434v-.529c0-.844.481-1.4 1.26-1.4.585 0 .87.333.953.63h.03v-.568h.905v2.19c0 .272.18.42.411.42.315 0 .639-.415.639-1.39v-.118c0-1.277-.95-2.326-2.484-2.326h-.04c-1.582 0-2.64 1.067-2.64 2.724v.157c0 1.867 1.237 2.654 2.57 2.654h.045c.507 0 .935-.07 1.18-.18v.731c-.219.1-.643.175-1.237.175h-.044C10.438 16 9 14.82 9 12.646v-.214C9 10.36 10.421 9 12.485 9h.035c2.12 0 3.314 1.43 3.314 3.034zm-4.04.21v.227c0 .586.227.8.581.8.31 0 .564-.17.564-.743v-.367c0-.516-.275-.708-.572-.708-.346 0-.573.245-.573.791" />
+                </svg> Dinhviet34@gmail.com
+            </a>
 
-
+        </div>
+    </div>
 
 </body>
+
+</html>

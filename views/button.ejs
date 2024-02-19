@@ -1,6 +1,6 @@
 <meta charset="UTF-8">
-<title>Bốc thăm trúng thưởng</title>
-
+<title> <%=room%></title>
+<link rel="icon" type="image/x-icon" href="/images/logo.ico">
 <!-- CSS (load bootstrap from a CDN) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -8,13 +8,7 @@
 <style>
     html,
     body {
-        margin: 0;
-        padding: 0;
-    }
-
-    .center {
-        
-        
+        height: 100%;
     }
 
     .button {
@@ -22,9 +16,9 @@
         display: block;
         margin: 10px 0;
         padding: 10px;
-        width: 100%;
-       height: 380px;
-        border-radius: 20px;
+        width: 600px;
+       height: 600px;
+        border-radius: 50%;
         font-size: 90pt;
         margin-top: 50px;
     }
@@ -32,56 +26,61 @@
 <script>
 
     $(document).ready(function () {
+       
         var socket = io("/");
-
+        const funcsend = (name, msg) => {
+            socket.emit(name, msg);
+        }
+        funcsend("Joinroom","<%=room%>")
         //client nhận dữ liệu từ server
+        socket.on("RoomAlert",function(data){
+           console.log(data);
+        })
         socket.on("Server-sent-data", function (data) {
-            if (data === 'start' || data==='start1' || data==='start2') {
-                
-                $("#send").attr("disabled", true);
-                $("#send").html('Đang chạy...');
-                $("#send1").attr("disabled", true);
-                $("#send1").html('Đang chạy...');
-                $("#send2").attr("disabled", true);
-                $("#send2").html('Đang chạy...');
-                $("#send3").attr("disabled", true);
-                $("#send3").html('Đang chạy...');
-            }
-        })
-        socket.on("Server-sent-home-ready",function(data){
-            if(data ==  "homeready"){
-                $("#send").attr("disabled", false);
-                $("#send").html('Giải thường');
-                $("#send1").attr("disabled", false);
-                $("#send1").html('Giải đặc biệt');
-                $("#send2").attr("disabled", false);
-                $("#send2").html('Giải nhất');
-                $("#send3").attr("disabled", false);
-                $("#send3").html('Giải nhì');
-            }
-        })
-        $("#send").click(function () {
+            if (data === 'start' || data === 'longstart') {
 
-            socket.emit("Client-sent-data", "start");
+                $("#send").attr("disabled", true);
+                $("#send").html('Running...');
+
+            }
+        })
+        socket.on("Server-sent-home-ready", function (data) {
+            if (data == "homeready") {
+                $("#send").attr("disabled", false);
+                $("#send").html('Press...');
+
+            }
+        })
+        $("#send").click(function (e) {
+            e.preventDefault();
+            if (!this.dataset.ignoreClick) {
+                funcsend("Client-sent-data","start <%=room%>");
+            }
+
         });
-        $("#send1").click(function(){
-            socket.emit("Client-sent-data", "start1");
-        });
-        $("#send2").click(function(){
-            socket.emit("Client-sent-data", "start2");
-        });
-        $("#send3").click(function(){
-            socket.emit("Client-sent-data", "start3");
+        $("#send").on('mousedown touchstart', function () {
+            const btn = this;
+            delete this.dataset.ignoreClick;
+            btn.dataset.longPressTimer = setTimeout(function () {
+                funcsend("Client-sent-data","longstart <%=room%>");
+                btn.dataset.ignoreClick = true;
+            }, 1000)
+        }).on('mouseup mouseleave touchend', function (e) {
+            clearTimeout(this.dataset.longPressTimer)
+            //alert("fuck");
+            funcsend("Client-sent-data","endlongstart <%=room%>");
         });
     })
+
+
 </script>
 
 <body>
-
-    <div class="center">
-        <button class="button btn btn-primary" id="send1">Giải đặc biệt</button>
-        <button class="button btn btn-primary" id="send2">Giải nhất</button>
-        <button class="button btn btn-primary" id="send3">Giải nhì</button>
-        <button class="button btn btn-primary" id="send">Giải thường</button>
+  
+    <div class="container h-100 d-flex justify-content-center">
+        <div class="my-auto">
+            <button class="button btn btn-primary" id="send">Press...</button>
+        </div>
     </div>
+   
 </body>

@@ -1,0 +1,6 @@
+const data = req.body;
+	const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET,{
+		expiresIn:'30s',
+	});
+	
+	console.log(room + " and " + game + " and " + accessToken);

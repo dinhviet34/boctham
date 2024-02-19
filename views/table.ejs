@@ -1,0 +1,277 @@
+<meta charset="UTF-8">
+<title>
+    <%=room%>
+</title>
+<link rel="icon" type="image/x-icon" href="/images/logo.ico">
+<!-- CSS (load bootstrap from a CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", sans-serif;
+        /*background-image: url("/images/bg.jpg");*/
+        /*background-size: 100% 100%;*/
+        background-color: #fee440;
+    }
+
+    .output {
+        border-radius: 10px;
+        font-size: 80px;
+        width: 100%;
+        height: 100%;
+        color: #0B60B0;
+        text-align: center;
+        font-size: 200pt;
+        font-weight: bold;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #result {
+        font-size: large;
+        color: #0A1D56;
+        display: flex;
+        text-align: center;
+        width: 100%;
+
+        overflow: auto;
+    }
+
+    #result div {
+        margin-left: 10px;
+    }
+
+    #footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        background-image: url("/images/flower2.png");
+        color: #fff;
+        background-size: 100% 100%;
+    }
+
+
+    .center {
+        background-color: #fff;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+        position: absolute;
+        border-radius: 10px;
+        left: 50%;
+        top: 50%;
+
+        -moz-transform: translate(-50%, -50%);
+        /* Firefox */
+        -ms-transform: translate(-50%, -50%);
+        /* IE 9 */
+        -webkit-transform: translate(-50%, -50%);
+        /* Safari and Chrome*/
+        -o-transform: translate(-50%, -50%);
+        /* Opera */
+        transform: translate(-50%, -50%);
+
+        /* optional size in px or %: */
+        width: 800px;
+        height: 600px;
+    }
+
+    #banner {
+        color: #265073;
+        display: flex;
+        text-align: center;
+        font-weight: bold;
+        font-size: 50pt;
+    }
+
+    svg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+
+    }
+    #bannertext {
+        vertical-align: middle;
+
+    }
+</style>
+<script>
+
+    $(document).ready(function () {
+        var socket = io("/");
+        var arr = [];
+        var arrbingo = [];
+        var reappend = $("#result");
+        var coupon = parseInt("<%=coupon%>")
+        for (var i = 1; i <= coupon; i++) {
+            arr.push(i);
+        }
+
+        console.log(arr);
+        const funcsend = (name, msg) => {
+            socket.emit(name, msg);
+        }
+        funcsend("Joinroom", '<%= room%>')
+        socket.on("RoomAlert", function (data) {
+            console.log(data);
+        })
+        socket.on("Server-sent-data", function (data) {
+            //alert(data);
+            reappend.empty();
+            var result;
+
+            result = random(data);
+
+
+
+            if (arrbingo.includes(result) === true) {
+
+            }
+            else {
+                arrbingo.push(result);
+                var index = arr.indexOf(parseInt(result));
+                if (index !== -1) {
+                    arr.splice(index, 1);
+                }
+
+                console.log(arrbingo); console.log(arr);
+                arrbingo.forEach(element => {
+                    if (element.includes('\n') === false) {
+                        reappend.append('<div><img src="/images/g1.png" width="15px" height="15px"></img>' + element + '</div>')
+                    }
+
+                });
+            }
+
+
+        });
+
+
+
+        var max_random = 100,
+            random_area = document.getElementById("output"),
+            origin_text = random_area.innerHTML;
+        intervalId = null;
+
+        const startInterval = () => {
+            intervalId = setInterval(function () {
+                random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
+            }, 50);
+        };
+        const endInterval = () => {
+            clearInterval(intervalId); // Sử dụng biến intervalId để xóa interval
+        };
+        function random(command) {
+            var i = 0;
+            var randomnumber = 0;
+            random_area.style.backgroundColor = "transparent";
+            random_area.style.backgroundImage = 'none';
+            random_area.style.fontWeight = 'normal';
+
+
+            if (command === 'longstart') {
+                startInterval();
+            }
+            if (command === 'endlongstart') {
+
+                endInterval();
+                socket.emit("Home-sent-data", "homeready <%=room%>");
+            }
+
+
+
+            randomnumber = random_area.innerHTML;
+
+            return randomnumber;
+        }
+
+    })
+</script>
+
+<body>
+
+    <svg preserveAspectRatio="xMidYMid slice" viewBox="10 10 80 80">
+        <defs>
+            <style>
+                @keyframes rotate {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                .out-top {
+                    animation: rotate 20s linear infinite;
+                    transform-origin: 13px 25px;
+                }
+
+                .in-top {
+                    animation: rotate 10s linear infinite;
+                    transform-origin: 13px 25px;
+                }
+
+                .out-bottom {
+                    animation: rotate 25s linear infinite;
+                    transform-origin: 84px 93px;
+                }
+
+                .in-bottom {
+                    animation: rotate 15s linear infinite;
+                    transform-origin: 84px 93px;
+                }
+            </style>
+        </defs>
+        <path fill="#9b5de5" class="out-top"
+            d="M37-5C25.1-14.7,5.7-19.1-9.2-10-28.5,1.8-32.7,31.1-19.8,49c15.5,21.5,52.6,22,67.2,2.3C59.4,35,53.7,8.5,37-5Z" />
+        <path fill="#f15bb5" class="in-top"
+            d="M20.6,4.1C11.6,1.5-1.9,2.5-8,11.2-16.3,23.1-8.2,45.6,7.4,50S42.1,38.9,41,24.5C40.2,14.1,29.4,6.6,20.6,4.1Z" />
+        <path fill="#00bbf9" class="out-bottom"
+            d="M105.9,48.6c-12.4-8.2-29.3-4.8-39.4.8-23.4,12.8-37.7,51.9-19.1,74.1s63.9,15.3,76-5.6c7.6-13.3,1.8-31.1-2.3-43.8C117.6,63.3,114.7,54.3,105.9,48.6Z" />
+        <path fill="#00f5d4" class="in-bottom"
+            d="M102,67.1c-9.6-6.1-22-3.1-29.5,2-15.4,10.7-19.6,37.5-7.6,47.8s35.9,3.9,44.5-12.5C115.5,92.6,113.9,74.6,102,67.1Z" />
+    </svg>
+    <div id="snow">
+
+
+        <div class="center">
+            <div id="banner">
+                <div id="logo">
+                    <img width="40" height="40" style="margin: 5px;" title="Random number" alt="Random"
+                        src="/images/logo.png" />
+                </div>
+                <div id="bannertext">
+                    <h1>
+                        <%=room%>
+                    </h1>
+                </div>
+
+            </div>
+
+            <div id="result">
+
+            </div>
+            <div class="output" id="output">
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+
+
+
+
+</body>
