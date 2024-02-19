@@ -50,8 +50,9 @@
                         funcsend("Joinroom", sup.room)
                         $('#qrcode').empty();
                         $("#result").show();
+                        var buttonlink = domain + "/button/" + sup.room.replaceAll(" ","%") + "/" + sup.accessToken
                         const qrcode = new QRCode(document.getElementById('qrcode'), {
-                            text: domain + "/button/" + sup.room.replace(" ","%") + "/" + sup.accessToken,
+                            text: buttonlink,
                             width: 128,
                             height: 128,
                             colorDark: '#000',
