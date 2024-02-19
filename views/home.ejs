@@ -51,7 +51,7 @@
                         $('#qrcode').empty();
                         $("#result").show();
                         const qrcode = new QRCode(document.getElementById('qrcode'), {
-                            text: domain + "/button/" + sup.room + "/" + sup.accessToken,
+                            text: domain + "/button/" + sup.room.replace(" ","%") + "/" + sup.accessToken,
                             width: 128,
                             height: 128,
                             colorDark: '#000',
