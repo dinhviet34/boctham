@@ -21,22 +21,28 @@ server.listen(app.get('port'), function () {
 });
 
 
-
 io.on("connection", function (socket) {
-	//console.log("userconnect");
-	socket.on("disconnect", function () {
-		console.log("disconnect");
-	});
-	socket.on("Joinroom",function(data){
-		socket.join(data);
-		io.sockets.in(data).emit("RoomAlert","ConnectedRoom " + data);
-		console.log("Welcome room " + data );
-	})
+	console.log(socket.id + " is connected");
 	
+	socket.on("disconnect", function () {
+		console.log(socket.id + " is disconnect");
+		
+	});
+	socket.on("Joinroom", function (data) {
+		
+		
+		//io.sockets.in(data).emit("RoomAlert", "ConnectedRoom " + data);
+	
+		socket.join(data);
+		
+		console.log("Welcome room " + data);
+		
+	})
+
 	//server lắng nghe dữ liệu từ client
 	socket.on("Client-sent-data", function (data) {
 		console.log(data);
-		var message  = data.split(" ")[0];
+		var message = data.split(" ")[0];
 		var room = data.split(" ")[1];
 		socket.join(room);
 		console.log(room);
@@ -45,7 +51,7 @@ io.on("connection", function (socket) {
 	});
 	socket.on("Home-sent-data", function (data) {
 		console.log(data);
-		var message  = data.split(" ")[0];
+		var message = data.split(" ")[0];
 		var room = data.split(" ")[1];
 		socket.join(room);
 		//sau khi lắng nghe dữ liệu, server phát lại dữ liệu này đến các client khác
@@ -60,34 +66,39 @@ io.on("connection", function (socket) {
 app.get("/", function (req, res) {
 	res.render("home");
 });
-app.post("/builder",function(req,res){
-	const {room,game,coupon} = req.body;
+app.post("/builder", function (req, res) {
+	
+	var name = req.body.name;
+	var room = req.body.room;
+	var game = req.body.game;
+	var coupon = req.body.coupon;
 	const data = req.body;
-	const accessToken = jwt.sign(data,process.env.ACCESS_TOKEN_SECRET,{
-		expiresIn:'2h',
+	const accessToken = jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {
+		expiresIn: '2h',
 	});
-	
-	res.json({room:room,game:game,coupon:coupon,accessToken});
-	
+
+	res.json({name:name, room: room, game: game, coupon: coupon, accessToken });
+
 
 
 });
-app.get("/table/:room/:game/:coupon/:key", function (req, res) {
+app.get("/table/:name/:room/:game/:coupon/:key", function (req, res) {
+	const name = req.params.name;
 	const roomnum = req.params.room;
 	const gamechar = req.params.game;
 	const coupon = req.params.coupon;
 	const authorizationClient = req.params.key;
 	const token = authorizationClient;
-  
+	
 	if (!token) return res.sendStatus(401)
-  
+
 	try {
 		jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-		res.render("table",{room:roomnum,game:gamechar,coupon:coupon});
+		res.render("table", { name: name, room: roomnum, game: gamechar, coupon: coupon,key:token });
 	} catch (e) {
 		return res.sendStatus(403);
 	}
-	
+
 });
 
 app.get("/button/:room/:key", function (req, res) {
@@ -95,16 +106,16 @@ app.get("/button/:room/:key", function (req, res) {
 	const gamechar = req.params.game;
 	const authorizationClient = req.params.key;
 	const token = authorizationClient;
-  
+
 	if (!token) return res.sendStatus(401)
-  
+
 	try {
 		jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-		res.render("button",{room:roomnum});
+		res.render("button", { room: roomnum });
 	} catch (e) {
 		return res.sendStatus(403);
 	}
-	
+
 })
 
 

@@ -112,12 +112,13 @@
         for (var i = 1; i <= coupon; i++) {
             arr.push(i);
         }
+        console.log('<%=room%>');
 
         console.log(arr);
         const funcsend = (name, msg) => {
             socket.emit(name, msg);
         }
-        funcsend("Joinroom", '<%= key%>')
+        funcsend("Joinroom", '<%= room%>')
         socket.on("RoomAlert", function (data) {
             console.log(data);
         })
@@ -185,7 +186,7 @@
                 if(randomornot === 'Random'){
                     random_area.innerHTML = arr[Math.floor(Math.random() * arr.length)];
                 }
-                socket.emit("Home-sent-data", "homeready <%=key%>");
+                socket.emit("Home-sent-data", "homeready <%=room%>");
             }
 
 
@@ -254,9 +255,10 @@
                 </div>
                 <div id="bannertext">
                     <h1>
-                        <%=room%>
+                        <%=name%>
                     </h1>
                 </div>
+             
 
             </div>
 
